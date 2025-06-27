@@ -15,6 +15,13 @@ const userSchema = new mongoose.Schema({
         required: true,
         minlength: 6,
     },
+    places: [
+        {
+            type: mongoose.Types.ObjectId,
+            required: true,
+            ref: "Place",
+        },
+    ],
 });
 
 export default mongoose.model("User", userSchema);

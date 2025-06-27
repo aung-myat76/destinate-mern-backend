@@ -5,5 +5,5 @@ http://localhost:5000/api/places/add-place
     "description": "good",
     "address": "US",
     "location": 32.24,
-    "userId": "u1"
+    "userId": "685d66ed8bd13400b497965d"
 }

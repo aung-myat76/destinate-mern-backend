@@ -1,5 +1,6 @@
 import { validationResult } from "express-validator";
 import User from "../models/user.js";
+import Place from "../models/place.js";
 import HttpError from "../models/http-error.js";
 
 export const postSignUp = async (req, res, next) => {
@@ -12,6 +13,7 @@ export const postSignUp = async (req, res, next) => {
             name,
             email,
             password,
+            places: [],
         });
 
         try {
@@ -22,6 +24,7 @@ export const postSignUp = async (req, res, next) => {
                         name,
                         email,
                         password,
+                        places: newUser.places,
                         message: "You have signed up an account",
                     });
                 })
