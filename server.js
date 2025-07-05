@@ -24,7 +24,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use("/uploads/img", express.static(path.join(__dirname, "uploads", "img")));
 app.use(
     cors({
-        origin: "https://destinate-mern-frontend-gfq2yoox7-aung-myat76s-projects.vercel.app", // your React app domain
+        origin: "https://destinate-mern.vercel.app", // your React app domain
         credentials: true, // allow cookies if needed
     })
 );
