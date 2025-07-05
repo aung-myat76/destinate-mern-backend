@@ -24,7 +24,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use("/uploads/img", express.static(path.join(__dirname, "uploads", "img")));
 app.use(
     cors({
-        origin: "http://localhost:5173", // your React app domain
+        origin: "https://destinate-mern-backend-production.up.railway.app/", // your React app domain
         credentials: true, // allow cookies if needed
     })
 );
