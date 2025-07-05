@@ -11,14 +11,14 @@
     },
     "name": "backend",
     "version": "1.0.0",
-    "main": "app.js",
+    "main": "server.js",
     "devDependencies": {
         "nodemon": "^3.1.10"
     },
     "type": "module",
     "scripts": {
-        "server": "nodemon app",
-        "start": "node app"
+        "server": "nodemon server",
+        "start": "node server"
     },
     "author": "",
     "license": "ISC",
