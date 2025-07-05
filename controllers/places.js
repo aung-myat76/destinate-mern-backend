@@ -64,6 +64,7 @@ export const postPlace = async (req, res, next) => {
         address,
         location,
         userId,
+        image: req.file.path,
     });
 
     let session;
@@ -102,9 +103,15 @@ export const patchPlace = async (req, res, next) => {
     place.name = name;
     place.description = description;
 
+    if (req.user.userId.toString() !== place.userId._id.toString()) {
+        return next(new HttpError("Authorization failed to update", 401));
+    }
     try {
         await place.save().then(() => {
-            res.status(200).json({ place: place.toObject({ getters: true }) });
+            res.status(200).json({
+                place: place.toObject({ getters: true }),
+                user: req.user,
+            });
         });
     } catch (err) {
         return next(new HttpError(err, 500));
@@ -121,6 +128,12 @@ export const deletePlace = async (req, res, next) => {
 
         if (!place) {
             return next(new HttpError("Could not find this place", 404));
+        }
+
+        console.log(req.user, place);
+
+        if (req.user.userId.toString() !== place.userId._id.toString()) {
+            return next(new HttpError("Authorization failed to delete", 401));
         }
     } catch (err) {
         return next(new HttpError(err), 500);

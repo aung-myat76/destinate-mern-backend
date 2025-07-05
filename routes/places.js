@@ -9,6 +9,8 @@ import {
     postPlace,
 } from "../controllers/places.js";
 import { get } from "mongoose";
+import upload from "../middlewares/file-upload.js";
+import authCheck from "../middlewares/authCheck.js";
 
 const router = express.Router();
 
@@ -18,7 +20,9 @@ router.get("/users/:userId", getPlacesByUserId);
 
 router.get("/:placeId", getPlace);
 
-router.post("/add-place", postPlace);
+router.use(authCheck);
+
+router.post("/add-place", upload.single("image"), postPlace);
 
 router.patch("/:placeId", patchPlace);
 

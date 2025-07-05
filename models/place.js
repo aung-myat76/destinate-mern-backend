@@ -32,6 +32,10 @@ const placeSchema = new Schema({
         required: true,
         ref: "User",
     },
+    image: {
+        type: String,
+        required: true,
+    },
 });
 
 export default mongoose.model("Place", placeSchema);

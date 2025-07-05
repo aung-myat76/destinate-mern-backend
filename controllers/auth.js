@@ -1,18 +1,34 @@
 import { validationResult } from "express-validator";
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+
 import User from "../models/user.js";
 import Place from "../models/place.js";
 import HttpError from "../models/http-error.js";
 
+export const serverErrorEmitter = (err) => {
+    return next(new HttpError(err, 500));
+};
+
 export const postSignUp = async (req, res, next) => {
     const { name, email, password } = req.body;
+
+    let cryptedPassword;
+
+    try {
+        cryptedPassword = await bcrypt.hash(password, 12);
+    } catch (err) {
+        serverErrorEmitter(err);
+    }
 
     if (!validationResult) {
         return next(new HttpError("Invalid entered values!", 403));
     } else {
         const newUser = new User({
             name,
+            profile: req.file.path,
             email,
-            password,
+            password: cryptedPassword,
             places: [],
         });
 
@@ -22,6 +38,7 @@ export const postSignUp = async (req, res, next) => {
                 .then(() => {
                     res.status(200).json({
                         name,
+                        profile: req.file.path,
                         email,
                         password,
                         places: newUser.places,
@@ -47,24 +64,33 @@ export const postSignUp = async (req, res, next) => {
 export const postLogin = async (req, res, next) => {
     const { email, password } = req.body;
 
-    let loggedInUser;
+    let user;
+    let isPswValid;
 
     try {
-        loggedInUser = await User.find({ email: email, password: password })
-            .exec()
-            .then((user) => {
-                if (!user.length > 0) {
-                    return next(new HttpError("You haven't Sign up yet!", 402));
-                }
+        user = await User.findOne({ email: email }).exec();
+        isPswValid = await bcrypt.compare(password, user.password);
+        if (!user) {
+            return next(new HttpError("You haven't Sign up yet!", 402));
+        }
 
-                return res.status(200).json({
-                    user: user,
-                    message: "Account have been logged in!",
-                });
-            })
-            .catch((err) => {
-                return next(new HttpError(err, 402));
-            });
+        if (!isPswValid) {
+            return next(new HttpError("Your Password is incorrect", 402));
+        }
+
+        const token = jwt.sign(
+            { userId: user._id, email: user.email },
+            "my_secret",
+            {
+                expiresIn: "1h",
+            }
+        );
+
+        return res.status(200).json({
+            user,
+            token,
+            message: "Account have been logged in!",
+        });
     } catch (err) {
         return next(new HttpError(err, 500));
     }
